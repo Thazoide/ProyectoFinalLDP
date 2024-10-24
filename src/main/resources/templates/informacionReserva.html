@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información de Reserva</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caladea:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Caladea';
+        text-decoration: none;
+        color: black;
+        list-style: none;
+    }
+
+    body {
+        display: flex;
+    }
+
+    header {
+
+        background-color: #ffffff;
+        padding: 2.8rem;
+        position: relative;
+    }
+
+    header ul li {
+        margin: 5vw 0;
+    }
+
+    header a {
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    header ul li a:hover {
+        background-color: #ce8c36;
+        transition: 0.3s all;
+        padding: 0.8rem;
+        border-radius: 1rem;
+        color: white;
+    }
+
+    header ul li a:hover i {
+        color: white;
+    }
+
+    header a:hover {
+        color: #424242;
+    }
+
+    .login {
+        position: absolute;
+        bottom: 5vh;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    main {
+        width: 100vw;
+        height: 100vh;
+        background-color: #dddddd;
+        position: relative;
+    }
+
+    /*Reserva de mesa*/
+    .form {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        display: flex;
+        transform: translate(-50%, -50%) scale(0.8);
+        padding: 1.5rem;
+        background-color: white;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 80vw;
+        max-width: 400px;
+        z-index: 10;
+        opacity: 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .form {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    body.show-modal .book,
+    body.show-modal .column,
+    body.show-modal .table-box {
+        opacity: 0.5;
+    }
+
+    .select {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .select i {
+        position: absolute;
+        left: 1rem;
+        color: #555;
+        font-size: 1.2rem;
+        pointer-events: none;
+    }
+
+    .custom-select,
+    .custom-input,
+    .custom-textarea {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .custom-button {
+        width: 100%;
+        padding: 1rem 1rem 1rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        outline: none;
+        border: 1px solid #ccc;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .custom-select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        cursor: pointer;
+    }
+
+    .custom-input:hover,
+    .custom-select:hover,
+    .custom-textarea:hover,
+    .custom-button:hover {
+        border-color: #ce8c36;
+    }
+
+    .custom-input:focus,
+    .custom-select:focus,
+    .custom-textarea:focus,
+    .custom-button:focus {
+        border-color: #ce8c36;
+        box-shadow: 0 0 5px #ce8c36;
+    }
+
+    .custom-textarea {
+        height: 15vh;
+        resize: none;
+    }
+
+    /*Mesas*/
+    .book {
+        border: 2rem solid #351515;
+        background-color: #525252;
+        display: grid;
+        grid-template-columns: repeat(7, auto);
+        justify-content: space-evenly;
+        width: 100%;
+        height: 100vh;
+    }
+
+    .table:hover {
+
+        transform: scale(1.1);
+        transition: transform 0.4s ease;
+    }
+
+    .table-box {
+        width: 10vw;
+        height: 38vh;
+        margin: 0.5rem 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-box:nth-child(10),
+    .table-box:nth-child(12),
+    .table-box:nth-child(14),
+    .table-box:nth-child(8) {
+        align-self: end;
+    }
+
+    .column {
+        background-color: #351515;
+        width: 2vw;
+        height: 30vh;
+        margin: 0;
+    }
+
+    .column:nth-child(9),
+    .column:nth-child(11),
+    .column:nth-child(13) {
+        align-self: end;
+    }
+
+    .table {
+        width: 8vw;
+        height: 12vh;
+        margin: 1rem 0;
+        transition: transform 0.4s ease;
+    }
+
+    /* Estilos aquí */
+    .table.available {
+        background-color: #5ECC23;
+        /* Verde para disponible */
+        cursor: pointer;
+    }
+
+    .table.unavailable {
+        background-color: grey;
+        /* Gris para no disponible */
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .table.unavailable:hover {
+        transform: none;
+    }
+
+    .form-2-btn {
+        width: 100%;
+        padding: 1rem 1rem 1rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        outline: none;
+        border: 1px solid #ccc;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .form-2 {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 20;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+        padding: 1.5rem;
+        background-color: white;
+        gap: 1rem;
+        width: 80vw;
+        max-width: 600px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+    }
+
+    .selected {
+        background-color: red !important;
+    }
+
+    #action-buttons {
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20;
+    }
+
+    .action-button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        cursor: pointer;
+        background-color: #ce8c36;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .action-button:hover {
+        background-color: #a66a28;
+    }
+</style>
+
+<body>
+    <header>
+        <center>
+            <img src="img/logo.png" style="width: 200px;" alt="logo">
+            <ul>
+                <li><a href="/" class="active"><i class="bi bi-house navicon"></i> Inicio</a></li>
+                <li><a href="#about"><i class="bi bi-file-earmark-text navicon"></i> Carta</a></li>
+                <li><a href="/reserva"><i class="bi bi-envelope navicon"></i> Reserva</a></li>
+            </ul>
+            <a class="login" href="/login"><i class="bi bi-person navicon"></i> Personal Autorizado</a></li>
+        </center>
+    </header>
+    <main>
+        <form action="/reserva-mesas" method="GET">
+        <div>
+            <center>
+                <br>
+                <h1>Información de Reserva</h1>
+                <br><br><br><br>
+                <h2>Mesa seleccionada:     <span th:text="${idMesa}"></span></h2><br><br>
+                <h2>Fecha de reserva:     <span th:text="${fecha}"></span></h2><br><br>
+                <h2>Hora de inicio:     <span th:text="${horaInicio}"></span></h2><br><br>
+                <h2>Hora de Finalización:     <span th:text="${horaFin}"></span></h2><br><br>
+                <h2>Nombre del cliente:     <span th:text="${nombre}"></span></span></h2><br><br>
+                <h2>DNI del cliente:     <span th:text="${dni}"></span></span></h2><br><br>
+                <h2>Correo del cliente:     <span th:text="${correo}"></span></span></h2><br><br>
+                <br><br>
+
+                <button id="imprimir-btn" class="action-button" onclick="window.print()">Imprimir</button>
+                <button id="continue-btn" type="submit" class="action-button">Continuar</button>
+            </center>
+        </div>
+    </form>
+    </main>
+</body>
+
+</html>

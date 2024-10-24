@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pedidos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        .container { margin-top: 20px; }
+        .order-item { display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #e0e0e0; }
+        .order-item:hover { background-color: #f9f9f9; }
+        .order-status select { margin-right: 10px; }
+        .summary { background-color: #f8f9fa; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-center">Gestión de Pedidos</h1>
+
+    <!-- Resumen -->
+    <div class="summary text-center mb-4">
+        <h2>Resumen de Pedidos</h2>
+        <p>Órdenes Pendientes: <strong th:text="${totalPendientes}"></strong></p>
+        <p>Órdenes Entregadas: <strong th:text="${totalEntregados}"></strong></p>
+    </div>
+
+    <!-- Lista de pedidos pendientes -->
+    <h2>Pedidos Pendientes</h2>
+    <div class="order-list">
+        <div th:each="pedido : ${pedidos}" th:if="${pedido.estado == 'Pendiente'}" class="order-item">
+            <p th:text="'#' + ${pedido.id} + ' - ' + ${pedido.cliente} + ' - ' + ${pedido.mesa.idMesa}"></p>
+            <div class="order-status">
+                <form th:action="@{/pedidos/actualizarEstado}" method="post">
+                    <input type="hidden" name="idPedido" th:value="${pedido.id}"/>
+                    <select name="nuevoEstado" class="form-select">
+                        <option value="Pendiente" th:selected="${pedido.estado != null && pedido.estado.equals('Pendiente')}">Pendiente</option>
+                        <option value="Entregado" th:selected="${pedido.estado != null && pedido.estado.equals('Entregado')}">Entregado</option>
+                    </select>
+                    <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-arrow-clockwise"></i> Actualizar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de pedidos entregados -->
+    <h2>Pedidos Entregados</h2>
+    <div class="order-list">
+        <div th:each="pedido : ${pedidos}" th:if="${pedido.estado == 'Entregado'}" class="order-item">
+            <p th:text="'#' + ${pedido.id} + ' - ' + ${pedido.cliente}"></p>
+            <div>
+                <a th:href="@{/pedidos/confirmacion/{pedidoId}(pedidoId=${pedido.id})}" class="btn btn-link">Ver Detalle</a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

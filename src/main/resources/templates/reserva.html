@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caladea:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Caladea';
+        text-decoration: none;
+        color: black;
+        list-style: none;
+    }
+
+    body {
+        display: flex;
+    }
+
+    header {
+
+        background-color: #ffffff;
+        padding: 2.8rem;
+        position: relative;
+    }
+
+    header ul li {
+        margin: 5vw 0;
+    }
+
+    header a {
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    header ul li a:hover {
+        background-color: #ce8c36;
+        transition: 0.3s all;
+        padding: 0.8rem;
+        border-radius: 1rem;
+        color: white;
+    }
+
+    header ul li a:hover i {
+        color: white;
+    }
+
+    header a:hover {
+        color: #424242;
+    }
+
+    .login {
+        position: absolute;
+        bottom: 5vh;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    main {
+        width: 100vw;
+        height: 100vh;
+        background-color: #928875;
+        position: relative;
+    }
+
+    /*Reserva de mesa*/
+    .form {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        display: flex;
+        transform: translate(-50%, -50%) scale(0.8);
+        padding: 1.5rem;
+        background-color: white;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 80vw;
+        max-width: 400px;
+        z-index: 10;
+        opacity: 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .form {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    body.show-modal .book,
+    body.show-modal .column,
+    body.show-modal .table-box {
+        opacity: 0.5;
+    }
+
+    .select {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .select i {
+        position: absolute;
+        left: 1rem;
+        color: #555;
+        font-size: 1.2rem;
+        pointer-events: none;
+    }
+
+    .custom-select,
+    .custom-input,
+    .custom-textarea {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .custom-button {
+        width: 100%;
+        padding: 1rem 1rem 1rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        outline: none;
+        border: 1px solid #ccc;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .custom-select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        cursor: pointer;
+    }
+
+    .custom-input:hover,
+    .custom-select:hover,
+    .custom-textarea:hover,
+    .custom-button:hover {
+        border-color: #ce8c36;
+    }
+
+    .custom-input:focus,
+    .custom-select:focus,
+    .custom-textarea:focus,
+    .custom-button:focus {
+        border-color: #ce8c36;
+        box-shadow: 0 0 5px #ce8c36;
+    }
+
+    .custom-textarea {
+        height: 15vh;
+        resize: none;
+    }
+
+    /*Mesas*/
+    .book {
+        border: 2rem solid #351515;
+        background-color: #525252;
+        display: grid;
+        grid-template-columns: repeat(7, auto);
+        justify-content: space-evenly;
+        width: 100%;
+        height: 100vh;
+    }
+
+    .table:hover {
+
+        transform: scale(1.1);
+        transition: transform 0.4s ease;
+    }
+
+    .table-box {
+        width: 10vw;
+        height: 38vh;
+        margin: 0.5rem 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-box:nth-child(10),
+    .table-box:nth-child(12),
+    .table-box:nth-child(14),
+    .table-box:nth-child(8) {
+        align-self: end;
+    }
+
+    .column {
+        background-color: #351515;
+        width: 2vw;
+        height: 30vh;
+        margin: 0;
+    }
+
+    .column:nth-child(9),
+    .column:nth-child(11),
+    .column:nth-child(13) {
+        align-self: end;
+    }
+
+    .table {
+        width: 8vw;
+        height: 12vh;
+        margin: 1rem 0;
+        transition: transform 0.4s ease;
+    }
+
+    /* Estilos aquí */
+    .table.available {
+        background-color: #5ECC23;
+        /* Verde para disponible */
+        cursor: pointer;
+    }
+
+    .table.unavailable {
+        background-color: grey;
+        /* Gris para no disponible */
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .table.unavailable:hover {
+        transform: none;
+    }
+
+    .form-2-btn {
+        width: 100%;
+        padding: 1rem 1rem 1rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        outline: none;
+        border: 1px solid #ccc;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .form-2 {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 20;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+        padding: 1.5rem;
+        background-color: white;
+        gap: 1rem;
+        width: 80vw;
+        max-width: 600px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+    }
+
+    .selected {
+        background-color: red !important;
+    }
+
+    #action-buttons {
+        display: none;
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20;
+    }
+
+    .action-button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        cursor: pointer;
+        background-color: #ce8c36;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .action-button:hover {
+        background-color: #a66a28;
+    }
+</style>
+
+<body>
+    <header>
+        <center>
+            <img src="img/logo.png" style="width: 200px;" alt="logo">
+            <ul>
+                <li><a href="/" class="active"><i class="bi bi-house navicon"></i> Inicio</a></li>
+                <li><a href="#about"><i class="bi bi-file-earmark-text navicon"></i> Carta</a></li>
+                <li><a href="/reserva"><i class="bi bi-envelope navicon"></i> Reserva</a></li>
+            </ul>
+            <a class="login" href="/login"><i class="bi bi-person navicon"></i> Personal Autorizado</a></li>
+            <p th:text="${hora}"></p>
+        </center>
+    </header>
+    <main>
+        <input type="hidden" name="mensaje" id="mensaje">
+        <div th:if="${formulario == 0}" class="form">
+            <form action="/disponibilidad" method="POST">
+                <h2>Reserva de Mesa</h2>
+                <div class="select">
+                    <i class="fas fa-users"></i>
+                    <select required class="custom-select" id="personas">
+                        <option value="1">1 Persona</option>
+                        <option value="2">2 Personas</option>
+                        <option value="3">3 Personas</option>
+                        <option value="4">4 Personas</option>
+                        <option value="5">5 Persona</option>
+                        <option value="6">6 Personas</option>
+                        <option value="7">7 Personas</option>
+                        <option value="8">8 Personas</option>
+                    </select>
+                </div>
+                <div class="select">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input id="fecha-reserva" type="date" name="fecha" required class="custom-input" />
+                </div>
+                <div class="select">
+                    <i class="fas fa-clock"></i>
+                    <input id="hora-reserva" type="time" name="hora" required class="custom-input" />
+                </div>
+                <div class="select">
+                    <i class="fas fa-comment"></i>
+                    <textarea id="comentarios" class="custom-textarea"
+                        placeholder="Escribe tus comentarios aquí..."></textarea>
+                </div>
+                <button type="submit" onclick="guardarDatos()" class="custom-button">Continuar</button>
+            </form>
+        </div>
+
+        <div th:if="${formulario == 1}" class="book">
+            <div class="table-box" th:each="mesa : ${disponibilidadMesas}">
+                <div class="table" th:class="${mesa[1] == 0} ? 'table available' : 'table unavailable'"
+                    th:data-mesa-id="${mesa[0]}">
+                </div>
+            </div>
+        </div>
+
+        <div id="action-buttons">
+            <button id="cancel-btn" class="action-button">Cancelar</button>
+            <button id="continue-btn" class="action-button">Continuar</button>
+        </div>
+
+        <form action="/reserva-mesas" method="POST">
+            <input type="hidden" id="formulario-value" name="formulario" value="${formulario}">
+            <div class="form-2">
+                <h2>Datos de Información</h2><br><br>
+
+                <input type="hidden" name="nroPersonas" id="nroPersonas">
+                <input type="hidden" name="fecha" id="fecha1">
+                <input type="hidden" name="hora" id="hora1">
+                <input type="hidden" name="comentarios" id="comentarios">
+                <input type="hidden" name="mesa" id="mesaSeleccionada">
+
+                <div class="select-2">
+                    <label for="dni">DNI</label>
+                    <input name="dni" id="dni" class="custom-input-2" type="text" minlength="8" required>
+                </div>
+                <div>
+                    <label for="nombres">Nombres</label>
+                    <input name="nombres" id="nombres" class="custom-input-2" type="text" required>
+                </div>
+                <div>
+                    <label for="apellidos">Apellidos</label>
+                    <input name="apellidos" id="apellidos" class="custom-input-2" type="text" required>
+                </div>
+                <div>
+                    <label for="telefono">Teléfono</label>
+                    <input name="telefono" id="telefono" class="custom-input-2" type="text"
+                        placeholder="999999999" required>
+                </div>
+                <div>
+                    <label for="correo">Correo</label>
+                    <input name="correo" id="correo" class="custom-input-2" type="email" placeholder="example@gmail.com"
+                        required>
+                </div><br>
+                <button type="button" id="back-to-booking" class="form-2-btn">Volver</button>
+                <button type="submit" class="form-2-btn" >Continuar</button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+
+        function guardarDatos() {
+            const nroPersonas = document.getElementById("personas").value;
+            const fecha = document.getElementById("fecha-reserva").value;
+            const hora = document.getElementById("hora-reserva").value;
+            const comentarios = document.getElementById("comentarios").value;
+
+            sessionStorage.setItem("nroPersonas", nroPersonas);
+            sessionStorage.setItem("fecha", fecha);
+            sessionStorage.setItem("hora", hora);
+            sessionStorage.setItem("comentarios", comentarios);
+
+
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const nroPersonas = sessionStorage.getItem("nroPersonas");
+            const fecha = sessionStorage.getItem("fecha");
+            const hora = sessionStorage.getItem("hora");
+            const comentarios = sessionStorage.getItem("comentarios");
+            const mesa = sessionStorage.getItem("mesa");
+
+            if (nroPersonas) {
+                document.getElementById("nroPersonas").value = nroPersonas;
+            }
+            if (fecha) {
+                document.getElementById("fecha1").value = fecha;
+            }
+            if (hora) {
+                document.getElementById("hora1").value = hora;
+            }
+            if (comentarios) {
+                document.getElementById("comentarios").value = comentarios;
+            }
+            if (mesa) {
+                document.getElementById("mesaSeleccionada").value = mesa;
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const tables = document.querySelectorAll('.table');
+            const actionButtons = document.getElementById('action-buttons');
+            const form2 = document.querySelector('.form-2');
+            let selectedTable = null;
+
+            tables.forEach(table => {
+                table.addEventListener('click', function () {
+                    if (selectedTable) {
+                        selectedTable.classList.remove('selected');
+                    }
+                    selectedTable = this;
+                    selectedTable.classList.add('selected');
+                    sessionStorage.setItem("mesa", selectedTable.getAttribute('data-mesa-id'));
+                    console.log(sessionStorage.getItem("mesa"))
+                    actionButtons.style.display = 'block';
+                });
+            });
+
+            document.getElementById('cancel-btn').addEventListener('click', function () {
+                if (selectedTable) {
+                    selectedTable.classList.remove('selected');
+                    selectedTable = null;
+                }
+                actionButtons.style.display = 'none';
+            });
+
+            document.getElementById('continue-btn').addEventListener('click', function () {
+                if (selectedTable) {
+                    form2.style.opacity = '1';
+                    form2.style.visibility = 'visible';
+                    actionButtons.style.display = 'none';
+                }
+            });
+
+            document.getElementById('back-to-booking').addEventListener('click', function () {
+                form2.style.opacity = '0';
+                form2.style.visibility = 'hidden';
+            });
+        });
+    </script>
+</body>
+
+</html>
